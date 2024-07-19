@@ -2,6 +2,7 @@ package nextstep.subway.domain.line;
 
 import nextstep.subway.domain.section.Section;
 import nextstep.subway.domain.station.Station;
+import nextstep.subway.domain.station.dto.StationResponse;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -98,5 +99,12 @@ public class Line {
 
     public List<Section> getSections() {
         return sections;
+    }
+
+    public List<Station> getStatinos() {
+        return sections.stream()
+                .flatMap(section -> Stream.of(section.getUpwardStation(), section.getDownwardStation()))
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
