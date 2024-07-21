@@ -47,12 +47,12 @@ public class SectionAcceptanceTest {
 
     /**
      * Given: 등록된 노선이 있고
-     * When: 관리자가 새로운 구간을 노선에 추가하면
+     * When: 관리자가 새로운 구간을 노선의 끝에 추가하면
      * Then: 노선에 새로운 구간이 추가된다.
      */
-    @DisplayName("지하철 구간을 등록한다.")
+    @DisplayName("지하철 구간을 노선의 끝에 등록한다.")
     @Test
-    void addSection() {
+    void addSectionToEnd() {
         //given
         SectionCreateRequest request = new SectionCreateRequest(국제업무지구역.getId(), 송도달빛축제공원역.getId(), 3);
 
@@ -66,6 +66,56 @@ public class SectionAcceptanceTest {
 
         var addedSection = response.as(SectionResponse.class);
         assertThat(addedSection).isEqualTo(new SectionResponse(국제업무지구역.getId(), 송도달빛축제공원역.getId(), 3));
+    }
+
+    /**
+     * Given: 등록된 노선이 있고
+     * When: 관리자가 새로운 구간을 노선의 가운데에 추가하면
+     * Then: 노선에 새로운 구간이 추가된다.
+     */
+    @DisplayName("지하철 구간을 노선의 가운데에 등록한다.")
+    @Test
+    void addSectionToMiddle() {
+        //given
+        var 인천터미널역 = StationCommonApi.createStation("인천터미널역").as(StationResponse.class);
+        SectionCreateRequest request = new SectionCreateRequest(계양역.getId(), 인천터미널역.getId(), 5);
+
+        //when
+        var response = LineCommonApi.addSection(인천1호선.getId(), request);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+
+        //then
+        var line = LineCommonApi.findLineById(인천1호선.getId()).as(LineResponse.class);
+        assertThat(line.getStations().size()).isEqualTo(3);
+
+        // TODO: distance도 잘 적용되었는지 확인해 봐야 할 것 같은데 현재 노선 조회 api 반환 방식이 구간 정보를 보여주지 않아서 api로는 확인이 불가능
+        //  추가할 때 도메인 로직에서 잘 처리하도록 두고, 단위 테스트로 검증하는 것이 맞을까?
+        var addedSection = response.as(SectionResponse.class);
+        assertThat(addedSection).isEqualTo(new SectionResponse(계양역.getId(), 인천터미널역.getId(), 5));
+    }
+
+    /**
+     * Given: 등록된 노선이 있고
+     * When: 관리자가 새로운 구간을 노선의 처음에 추가하면
+     * Then: 노선에 새로운 구간이 추가된다.
+     */
+    @DisplayName("지하철 구간을 노선의 처음에 등록한다.")
+    @Test
+    void addSectionToFirst() {
+        //given
+        var 신검단중앙역 = StationCommonApi.createStation("신검단중앙역").as(StationResponse.class);
+        SectionCreateRequest request = new SectionCreateRequest(신검단중앙역.getId(), 계양역.getId(), 3);
+
+        //when
+        var response = LineCommonApi.addSection(인천1호선.getId(), request);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+
+        //then
+        var line = LineCommonApi.findLineById(인천1호선.getId()).as(LineResponse.class);
+        assertThat(line.getStations().size()).isEqualTo(3);
+
+        var addedSection = response.as(SectionResponse.class);
+        assertThat(addedSection).isEqualTo(new SectionResponse(신검단중앙역.getId(), 계양역.getId(), 3));
     }
 
     /**
