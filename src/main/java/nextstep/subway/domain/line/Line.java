@@ -21,6 +21,7 @@ public class Line {
     @Column(length = 30, nullable = false)
     private String color;
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "line_id")
     private List<Section> sections = new ArrayList<>();
 
     public Line() {
