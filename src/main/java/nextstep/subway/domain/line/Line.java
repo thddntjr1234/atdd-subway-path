@@ -124,7 +124,7 @@ public class Line {
     }
 
     private void addSectionToLast(Section newSection) {
-        if (!sections.get(0).getDownwardStation().equals(newSection.getUpwardStation())) {
+        if (!sections.get(sections.size() - 1).getDownwardStation().equals(newSection.getUpwardStation())) {
             throw new IllegalArgumentException("노선의 끝에 등록할 구간의 상행역은 기존 노선의 하행종점역이어야 합니다.");
         }
 
