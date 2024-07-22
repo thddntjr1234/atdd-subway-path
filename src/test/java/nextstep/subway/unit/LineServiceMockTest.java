@@ -54,8 +54,6 @@ public class LineServiceMockTest {
     void addSectionToLast() {
         // given
         // lineRepository, stationService stub 설정을 통해 초기값 셋팅
-        //TODO: var를 사용하면 타입을 신경쓰지 않고 테스트의 과정에 집중할 수 있지만, 이걸 수정해야 한다면 타입을 확인하기 위한 과정 때문
-        // 에 오히려 리팩토링에 방해가 될 것 같다. 그래서 도메인 레벨의 클래스 타입보다는 RestAssured Response 와 같이 제한적인 부분에만 사용하는 것이 좋다고 생각하는데 리뷰어 의견이 궁금하다.
         var 인천1호선_신구간 = new Section(국제업무지구역, 송도달빛축제공원역, 3);
 
         when(lineRepository.findById(1L)).thenReturn(Optional.of(인천1호선));
@@ -65,10 +63,6 @@ public class LineServiceMockTest {
 
         // when
         // lineService.addSection 호출
-        // TODO: 서비스 메서드는 DTO를 통해 전달받기 때문에 테스트 코드에서 엔티티를 Request 객체로 다시 매핑해 주어야 하는 불편함이 생긴다.
-        //  또한 이 서비스 메서드가 하나의 DTO에 의존하게 되기 때문에 다른 DTO를 통한 사용에 제한이 될 수 있다고 생각한다.
-        //  하지만 DTO의 목적이 계층 간의 데이터 전달이고, 엔티티를 계층 간 전달하면서 사용하는 것은 문제가 될 것 같은데, 왜 문제가 될 것 같은지를
-        //  잘 모르겠다. 리뷰어는 어떻게 생각하시는지 궁금하다.
         var 인천1호선_신구간_생성_요청 = SectionCreateRequest.of(인천1호선_신구간);
         lineService.addSection(1L, 인천1호선_신구간_생성_요청);
 

@@ -88,8 +88,6 @@ public class SectionAcceptanceTest {
         var line = LineCommonApi.findLineById(인천1호선.getId()).as(LineResponse.class);
         assertThat(line.getStations().size()).isEqualTo(3);
 
-        // TODO: distance도 잘 적용되었는지 확인해 봐야 할 것 같은데 현재 노선 조회 api 반환 방식이 구간 정보를 보여주지 않아서 api로는 확인이 불가능
-        //  추가할 때 도메인 로직에서 잘 처리하도록 두고, 단위 테스트로 검증하는 것이 맞을까?
         var addedSection = response.as(SectionResponse.class);
         assertThat(addedSection).isEqualTo(new SectionResponse(계양역.getId(), 인천터미널역.getId(), 5));
     }

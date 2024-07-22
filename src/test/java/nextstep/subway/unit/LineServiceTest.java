@@ -73,8 +73,6 @@ public class LineServiceTest {
         Line line = lineRepository.findById(인천1호선.getId()).get();
         assertThat(line.getSections().size()).isEqualTo(2);
         assertThat(line.getSections().stream()
-                // TODO: stationRepository에 초기값을 세팅하는 과정에서 stream을 사용하기 때문에 id값까지 비교하지 않고 이름만 비교함
-                //  이름만 비교하는 방식이 올바르게 값을 검증하는 것이 맞을지?(다른 노선의 같은 이름의 역이 있다면 검증이 실패할 가능성이 있다고 생각해서..)
                 .flatMap(section -> Stream.of(section.getUpwardStation().getName(), section.getDownwardStation().getName()))
                 .distinct()
                 .collect(Collectors.toList()))
