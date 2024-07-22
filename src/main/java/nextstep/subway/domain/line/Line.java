@@ -140,6 +140,7 @@ public class Line {
             // 하행역 동일 기준 추가 프로세스
             validateMiddleAdditionCase(newSection, basedOnDownStation.get());
             middleCaseDownStationProcess(newSection);
+            return;
         }
 
         Optional<Section> basedOnUpStation = sections.stream()
