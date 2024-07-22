@@ -76,7 +76,7 @@ public class SectionTest {
     @Test
     void successAddToMiddleDownStationCase() {
         //when
-        Section 신구간 = new Section(계양역, 인천터미널역, 3);
+        Section 신구간 = new Section(인천터미널역, 국제업무지구역, 3);
 
         인천1호선.addSection(신구간);
 
