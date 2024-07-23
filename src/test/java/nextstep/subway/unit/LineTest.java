@@ -45,7 +45,7 @@ class LineTest {
         인천1호선.addSection(인천1호선_신구간);
 
         //when
-        var stations = 인천1호선.getStatinos();
+        var stations = 인천1호선.getStations();
 
         //then
         assertThat(stations.size()).isEqualTo(3);

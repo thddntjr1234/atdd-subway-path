@@ -57,7 +57,7 @@ public class Line {
         return sections.getSections();
     }
 
-    public List<Station> getStatinos() {
+    public List<Station> getStations() {
         return sections.getStations();
     }
 }
