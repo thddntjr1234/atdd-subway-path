@@ -1,5 +1,7 @@
 package nextstep.subway.acceptance;
 
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import nextstep.subway.utils.DatabaseCleanup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,10 +78,10 @@ public class StationAcceptanceTest {
     @Test
     void deleteStation() {
         //given
-        StationCommonApi.createStation("강남역");
+        var response = StationCommonApi.createStation("강남역");
 
         //when
-        StationCommonApi.deleteStation(1L);
+        StationCommonApi.deleteStation(response.jsonPath().getLong("id"));
 
         //then
         List<String> stationNames = StationCommonApi.findAllStations().jsonPath()
