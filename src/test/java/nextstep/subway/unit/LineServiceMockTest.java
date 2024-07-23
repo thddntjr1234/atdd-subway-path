@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -56,20 +57,21 @@ public class LineServiceMockTest {
         // lineRepository, stationService stub 설정을 통해 초기값 셋팅
         var 인천1호선_신구간 = new Section(국제업무지구역, 송도달빛축제공원역, 3);
 
-        when(lineRepository.findById(1L)).thenReturn(Optional.of(인천1호선));
-        when(stationService.findByStationId(2L)).thenReturn(국제업무지구역);
-        when(stationService.findByStationId(3L)).thenReturn(송도달빛축제공원역);
+        when(lineRepository.findById(인천1호선.getId())).thenReturn(Optional.of(인천1호선));
+        when(stationService.findByStationId(국제업무지구역.getId())).thenReturn(국제업무지구역);
+        when(stationService.findByStationId(송도달빛축제공원역.getId())).thenReturn(송도달빛축제공원역);
 
 
         // when
         // lineService.addSection 호출
         var 인천1호선_신구간_생성_요청 = SectionCreateRequest.of(인천1호선_신구간);
-        lineService.addSection(1L, 인천1호선_신구간_생성_요청);
+        lineService.addSection(인천1호선.getId(), 인천1호선_신구간_생성_요청);
 
         // then
         // lineService.findLineById 메서드를 통해 검증
-        assertThat(lineService.findLineById(1L).getStations().size()).isEqualTo(3);
-        assertThat(lineService.findLineById(1L).getStations().stream()
+        var stations = lineService.findLineById(인천1호선.getId()).getStations();
+        assertThat(stations).isEqualTo(3);
+        assertThat(stations.stream()
                 .map(StationResponse::getName)
                 .distinct()
                 .collect(Collectors.toList())).containsExactly("계양역", "국제업무지구역", "송도달빛축제공원역");
@@ -82,19 +84,20 @@ public class LineServiceMockTest {
         // lineRepository, stationService stub 설정을 통해 초기값 셋팅
         var 인천1호선_신구간 = new Section(신검암중앙역, 계양역, 6);
 
-        when(lineRepository.findById(1L)).thenReturn(Optional.of(인천1호선));
-        when(stationService.findByStationId(1L)).thenReturn(계양역);
-        when(stationService.findByStationId(4L)).thenReturn(신검암중앙역);
+        when(lineRepository.findById(인천1호선.getId())).thenReturn(Optional.of(인천1호선));
+        when(stationService.findByStationId(계양역.getId())).thenReturn(계양역);
+        when(stationService.findByStationId(신검암중앙역.getId())).thenReturn(신검암중앙역);
 
         // when
         // lineService.addSection 호출
         var 인천1호선_신구간_생성_요청 = SectionCreateRequest.of(인천1호선_신구간);
-        lineService.addSection(1L, 인천1호선_신구간_생성_요청);
+        lineService.addSection(인천1호선.getId(), 인천1호선_신구간_생성_요청);
 
         // then
         // lineService.findLineById 메서드를 통해 검증
-        assertThat(lineService.findLineById(1L).getStations().size()).isEqualTo(3);
-        assertThat(lineService.findLineById(1L).getStations().stream()
+        var stations = lineService.findLineById(인천1호선.getId()).getStations();
+        assertThat(stations).isEqualTo(3);
+        assertThat(stations.stream()
                 .map(StationResponse::getName)
                 .distinct()
                 .collect(Collectors.toList())).containsExactly("신검암중앙역", "계양역", "국제업무지구역");
@@ -107,19 +110,20 @@ public class LineServiceMockTest {
         // lineRepository, stationService stub 설정을 통해 초기값 셋팅
         var 인천1호선_신구간 = new Section(인천터미널역, 국제업무지구역, 3);
 
-        when(lineRepository.findById(1L)).thenReturn(Optional.of(인천1호선));
-        when(stationService.findByStationId(2L)).thenReturn(국제업무지구역);
-        when(stationService.findByStationId(5L)).thenReturn(인천터미널역);
+        when(lineRepository.findById(인천1호선.getId())).thenReturn(Optional.of(인천1호선));
+        when(stationService.findByStationId(국제업무지구역.getId())).thenReturn(국제업무지구역);
+        when(stationService.findByStationId(인천터미널역.getId())).thenReturn(인천터미널역);
 
         // when
         // lineService.addSection 호출
         var 인천1호선_신구간_생성_요청 = SectionCreateRequest.of(인천1호선_신구간);
-        lineService.addSection(1L, 인천1호선_신구간_생성_요청);
+        lineService.addSection(인천1호선.getId(), 인천1호선_신구간_생성_요청);
 
         // then
         // lineService.findLineById 메서드를 통해 검증
-        assertThat(lineService.findLineById(1L).getStations().size()).isEqualTo(3);
-        assertThat(lineService.findLineById(1L).getStations().stream()
+        var stations = lineService.findLineById(인천1호선.getId()).getStations();
+        assertThat(stations.size()).isEqualTo(3);
+        assertThat(stations.stream()
                 .map(StationResponse::getName)
                 .distinct()
                 .collect(Collectors.toList())).containsExactly("계양역", "인천터미널역", "국제업무지구역");
@@ -132,19 +136,20 @@ public class LineServiceMockTest {
         // lineRepository, stationService stub 설정을 통해 초기값 셋팅
         var 인천1호선_신구간 = new Section(계양역, 인천터미널역, 5);
 
-        when(lineRepository.findById(1L)).thenReturn(Optional.of(인천1호선));
-        when(stationService.findByStationId(1L)).thenReturn(계양역);
-        when(stationService.findByStationId(5L)).thenReturn(인천터미널역);
+        when(lineRepository.findById(인천1호선.getId())).thenReturn(Optional.of(인천1호선));
+        when(stationService.findByStationId(계양역.getId())).thenReturn(계양역);
+        when(stationService.findByStationId(인천터미널역.getId())).thenReturn(인천터미널역);
 
         // when
         // lineService.addSection 호출
         var 인천1호선_신구간_생성_요청 = SectionCreateRequest.of(인천1호선_신구간);
-        lineService.addSection(1L, 인천1호선_신구간_생성_요청);
+        lineService.addSection(인천1호선.getId(), 인천1호선_신구간_생성_요청);
 
         // then
         // lineService.findLineById 메서드를 통해 검증
-        assertThat(lineService.findLineById(1L).getStations().size()).isEqualTo(3);
-        assertThat(lineService.findLineById(1L).getStations().stream()
+        var stations = lineService.findLineById(인천1호선.getId()).getStations();
+        assertThat(stations).isEqualTo(3);
+        assertThat(stations.stream()
                 .map(StationResponse::getName)
                 .distinct()
                 .collect(Collectors.toList())).containsExactly("계양역", "인천터미널역", "국제업무지구역");
