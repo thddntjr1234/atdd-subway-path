@@ -93,10 +93,20 @@ public class SectionTest {
         assertThatThrownBy(() -> 인천1호선.addSection(신구간)).isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("구간 등록 시 상행역과 하행역이 동일한 경우 구간 추가에 실패한다.")
+    @Test
+    void failAddWhenBothSameStation() {
+        //when
+        Section 동일_구간 = new Section(계양역, 국제업무지구역, 15);
+
+        //then
+        assertThatThrownBy(() -> 인천1호선.addSection(동일_구간)).isInstanceOf(IllegalArgumentException.class);
+    }
 
     @DisplayName("구간이 1개인 경우 역을 삭제할 수 없다.")
     @Test
     void deleteFailure() {
+
         //given
         Station deleteTarget = 국제업무지구역;
         assertThatThrownBy(() -> 인천1호선.deleteSection(deleteTarget)).isInstanceOf(NoSuchElementException.class);
