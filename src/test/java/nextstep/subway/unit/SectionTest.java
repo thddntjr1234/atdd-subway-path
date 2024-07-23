@@ -13,7 +13,6 @@ import java.util.NoSuchElementException;
 import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("지하철 노선 구간 단위테스트")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class SectionTest {
     private Line 인천1호선;
     private Station 계양역;
