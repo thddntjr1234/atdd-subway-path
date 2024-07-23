@@ -50,7 +50,6 @@ public class LineService {
     public void updateLine(Long id, LineUpdateRequest request) {
         Line line = findById(id, "수정할 노선이 존재하지 않습니다.");
         line.update(request.getName(), request.getColor());
-        lineRepository.save(line);
     }
 
     @Transactional
@@ -66,7 +65,6 @@ public class LineService {
 
         Section newSection = new Section(upwardStation, downwardStation, request.getDistance());
         line.addSection(newSection);
-        lineRepository.save(line);
 
         return SectionResponse.of(newSection);
     }
