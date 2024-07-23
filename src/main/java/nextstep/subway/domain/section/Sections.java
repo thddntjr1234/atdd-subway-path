@@ -76,7 +76,7 @@ public class Sections {
             throw new IllegalArgumentException("노선에 존재하는 구간이 없습니다.");
         }
 
-        Section firstSection = sections.get(0);
+        Section firstSection = getFirstSection();
         return firstSection.getUpwardStation().equals(newSection.getDownwardStation());
     }
 
@@ -85,7 +85,7 @@ public class Sections {
             throw new IllegalArgumentException("노선에 존재하는 구간이 없습니다.");
         }
 
-        Section lastSection = sections.get(sections.size() - 1);
+        Section lastSection = getLastSection();
         return lastSection.getDownwardStation().equals(newSection.getUpwardStation());
     }
 
@@ -201,6 +201,14 @@ public class Sections {
     private boolean isSectionLastElement(Section section) {
         Section lastSection = sections.get(sections.size() - 1);
         return section.equals(lastSection);
+    }
+
+    private Section getLastSection() {
+        return sections.get(sections.size() - 1);
+    }
+
+    private Section getFirstSection() {
+        return sections.get(0);
     }
 
     public List<Section> getSections() {
