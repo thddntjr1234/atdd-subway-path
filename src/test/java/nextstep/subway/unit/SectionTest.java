@@ -115,13 +115,13 @@ public class SectionTest {
     @DisplayName("정상 구간을 제거한다.")
     @Test
     void successDelete() {
-        //when
-        Station newUpStation = 국제업무지구역;
-        Station newDownStation = new Station(3L, "송도달빛축제공원역");
-        Section newSection = new Section(newUpStation, newDownStation, 3);
-        인천1호선.addSection(newSection);
+        //given
+        인천1호선.addSection(new Section(국제업무지구역, 송도달빛축제공원역, 3));
 
-        인천1호선.deleteSection(newDownStation);
+        //when
+        인천1호선.deleteSection(송도달빛축제공원역);
+
+        //then
         assertThat(인천1호선.getSections().get(0)).isEqualTo(new Section(계양역, 국제업무지구역, 15));
     }
 }
