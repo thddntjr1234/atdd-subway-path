@@ -72,9 +72,7 @@ public class Sections {
     }
 
     private boolean isFirstAddCase(Section newSection) {
-        int sectionsSize = sections.size();
-
-        if (sectionsSize == 0) {
+        if (sections.isEmpty()) {
             throw new IllegalArgumentException("노선에 존재하는 구간이 없습니다.");
         }
 
@@ -83,13 +81,11 @@ public class Sections {
     }
 
     private boolean isLastAddCase(Section newSection) {
-        int sectionsSize = sections.size();
-
-        if (sectionsSize == 0) {
+        if (sections.isEmpty()) {
             throw new IllegalArgumentException("노선에 존재하는 구간이 없습니다.");
         }
 
-        Section lastSection = sections.get(sectionsSize - 1);
+        Section lastSection = sections.get(sections.size() - 1);
         return lastSection.getDownwardStation().equals(newSection.getUpwardStation());
     }
 
