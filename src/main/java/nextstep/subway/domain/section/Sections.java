@@ -162,7 +162,7 @@ public class Sections {
     }
 
     private void middleCaseDownStationProcess(Section newSection) {
-        // 하단 기준인 섹션의 indx를 얻는다
+        // 하단 기준인 섹션의 index를 얻는다
         Section leftSection = sections.stream()
                 .filter(section -> section.getDownwardStation().equals(newSection.getDownwardStation()))
                 .findFirst().get();
