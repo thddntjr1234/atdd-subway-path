@@ -42,18 +42,13 @@ public class LineService {
     }
 
     public LineResponse findLineById(Long id) {
-         Line line = lineRepository.findById(id).orElseThrow(() -> {
-            throw new IllegalArgumentException("조회할 노선이 존재하지 않습니다.");
-         });
-
-         return LineResponse.of(line);
+        Line line = findById(id, "조회할 노선이 존재하지 않습니다.");
+        return LineResponse.of(line);
     }
 
     @Transactional
     public void updateLine(Long id, LineUpdateRequest request) {
-        Line line = lineRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("수정할 노선이 존재하지 않습니다."));
-
+        Line line = findById(id, "수정할 노선이 존재하지 않습니다.");
         line.update(request.getName(), request.getColor());
         lineRepository.save(line);
     }
@@ -65,7 +60,7 @@ public class LineService {
 
     @Transactional
     public SectionResponse addSection(Long lineId, SectionCreateRequest request) {
-        Line line = lineRepository.findById(lineId).orElseThrow(() -> new IllegalArgumentException("구간을 추가할 노선이 존재하지 않습니다."));
+        Line line = findById(lineId, "구간을 추가할 노선이 존재하지 않습니다.");
         Station upwardStation = stationService.findByStationId(request.getUpStationId());
         Station downwardStation = stationService.findByStationId(request.getDownStationId());
 
@@ -78,7 +73,11 @@ public class LineService {
 
     @Transactional
     public void deleteSection(Long lineId, Long stationId) {
-        Line line = lineRepository.findById(lineId).orElseThrow(() -> new IllegalArgumentException("구간을 삭제할 노선이 존재하지 않습니다."));
+        Line line = findById(lineId, "구간을 삭제할 노선이 존재하지 않습니다.");
         line.deleteSection(stationService.findByStationId(stationId));
+    }
+
+    private Line findById(Long id, String exceptionMessage) {
+        return lineRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(exceptionMessage));
     }
 }
