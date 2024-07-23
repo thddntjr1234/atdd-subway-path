@@ -95,12 +95,8 @@ public class Sections {
             return true;
         }
 
-        if (sections.stream()
-                .anyMatch(e -> e.getDownwardStation().equals(newSection.getDownwardStation()))) {
-            return true;
-        }
-
-        return false;
+        return sections.stream()
+                .anyMatch(e -> e.getDownwardStation().equals(newSection.getDownwardStation()));
     }
 
     private void addSectionToFirst(Section newSection) {
