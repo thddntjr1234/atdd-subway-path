@@ -177,21 +177,53 @@ public class Sections {
     }
 
     public void deleteSection(Station station) {
+        validateStationDeletable(station);
+
+        SectionStrategy strategy = null;
+        if (isFirstDeletionCase(station)) {
+            strategy = new FirstCaseSectionStrategy();
+        }
+
+        if (isLastDeletionCase(station)) {
+            strategy = new LastCaseSectionStrategy();
+        }
+
+        if (isMiddleDeletionCase(station)) {
+            strategy = new MiddleCaseSectionStrategy();
+        }
+
+        // validateStationDeletable에서 놓친 케이스에 대한 방어코드
+        if (strategy == null) {
+            throw new IllegalArgumentException("구간 제거에 실패했습니다.");
+        }
+
+        strategy.deleteSection(sections, station);
+    }
+
+    private void validateStationDeletable(Station station) {
         if (sections.size() == 1) {
             throw new NoSuchElementException("구간이 1개인 경우 구간을 삭제할 수 없습니다.");
         }
 
-        Section section = sections.stream()
-                .filter(element -> element.getDownwardStation().equals(station))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 구간입니다."));
-
-
-        if (!isSectionLastElement(section)) {
-            throw new IllegalArgumentException("마지막 구간에 해당하는 역만 삭제할 수 있습니다.");
+        List<Station> stations = getStations();
+        if (!stations.contains(station)) {
+            throw new IllegalArgumentException("존재하지 않는 역입니다.");
         }
+    }
 
-        sections.remove(section);
+    private boolean isFirstDeletionCase(Station station) {
+        List<Station> stations = getStations();
+        return stations.contains(station) && stations.indexOf(station) == 0;
+    }
+
+    private boolean isMiddleDeletionCase(Station station) {
+        List<Station> stations = getStations();
+        return stations.contains(station) && (stations.indexOf(station) > 0 && stations.indexOf(station) < stations.size() - 1);
+    }
+
+    private boolean isLastDeletionCase(Station station) {
+        List<Station> stations = getStations();
+        return stations.contains(station) && stations.indexOf(station) == stations.size() - 1;
     }
 
     private boolean isSectionLastElement(Section section) {
