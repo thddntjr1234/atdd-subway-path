@@ -10,6 +10,7 @@ import nextstep.subway.domain.station.StationService;
 import nextstep.subway.domain.station.dto.StationResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -153,5 +154,84 @@ public class LineServiceMockTest {
                 .map(StationResponse::getName)
                 .distinct()
                 .collect(Collectors.toList())).containsExactly(계양역.getName(), 인천터미널역.getName(), 국제업무지구역.getName());
+    }
+
+    @DisplayName("지하철 구간 삭제")
+    @Nested
+    class deleteSection {
+        @Test
+        @DisplayName("첫번째 구간 삭제")
+        void deleteFirstSection() {
+            // given
+            when(lineRepository.findById(인천1호선.getId())).thenReturn(Optional.ofNullable(인천1호선));
+            when(stationService.findByStationId(신검암중앙역.getId())).thenReturn(신검암중앙역);
+            when(stationService.findByStationId(계양역.getId())).thenReturn(계양역);
+
+            var 인천1호선_신구간 = new Section(신검암중앙역, 계양역, 4);
+            var 인천1호선_신구간_생성_요청 = SectionCreateRequest.of(인천1호선_신구간);
+            lineService.addSection(인천1호선.getId(), 인천1호선_신구간_생성_요청);
+
+            //when
+            lineService.deleteSection(인천1호선.getId(), 신검암중앙역.getId());
+
+            //then
+            var stations = lineService.findLineById(인천1호선.getId()).getStations();
+            assertThat(stations.size()).isEqualTo(2);
+            assertThat(stations.stream()
+                    .map(StationResponse::getName)
+                    .distinct()
+                    .collect(Collectors.toList())).containsExactly(계양역.getName(), 국제업무지구역.getName());
+        }
+
+        @Test
+        @DisplayName("중간 구간 삭제")
+        void deleteMiddleSection() {
+            // given
+            when(lineRepository.findById(인천1호선.getId())).thenReturn(Optional.ofNullable(인천1호선));
+            when(stationService.findByStationId(인천터미널역.getId())).thenReturn(인천터미널역);
+            when(stationService.findByStationId(계양역.getId())).thenReturn(계양역);
+            when(stationService.findByStationId(국제업무지구역.getId())).thenReturn(국제업무지구역);
+
+            var 인천1호선_신구간 = new Section(계양역, 인천터미널역, 4);
+            var 인천1호선_신구간_생성_요청 = SectionCreateRequest.of(인천1호선_신구간);
+            lineService.addSection(인천1호선.getId(), 인천1호선_신구간_생성_요청);
+
+            //when
+            lineService.deleteSection(인천1호선.getId(), 인천터미널역.getId());
+
+            //then
+            var line = lineService.findLineById(인천1호선.getId());
+            var stations = line.getStations();
+            assertThat(stations.size()).isEqualTo(2);
+            assertThat(stations.stream()
+                    .map(StationResponse::getName)
+                    .distinct()
+                    .collect(Collectors.toList())).containsExactly(계양역.getName(), 국제업무지구역.getName());
+        }
+
+        @Test
+        @DisplayName("마지막 구간 삭제")
+        void deleteLastSection() {
+            // given
+            when(lineRepository.findById(인천1호선.getId())).thenReturn(Optional.ofNullable(인천1호선));
+            when(stationService.findByStationId(송도달빛축제공원역.getId())).thenReturn(송도달빛축제공원역);
+            when(stationService.findByStationId(국제업무지구역.getId())).thenReturn(국제업무지구역);
+
+            var 인천1호선_신구간 = new Section(국제업무지구역, 송도달빛축제공원역, 4);
+            var 인천1호선_신구간_생성_요청 = SectionCreateRequest.of(인천1호선_신구간);
+            lineService.addSection(인천1호선.getId(), 인천1호선_신구간_생성_요청);
+
+            //when
+            lineService.deleteSection(인천1호선.getId(), 송도달빛축제공원역.getId());
+
+            //then
+            var line = lineService.findLineById(인천1호선.getId());
+            var stations = line.getStations();
+            assertThat(stations.size()).isEqualTo(2);
+            assertThat(stations.stream()
+                    .map(StationResponse::getName)
+                    .distinct()
+                    .collect(Collectors.toList())).containsExactly(계양역.getName(), 국제업무지구역.getName());
+        }
     }
 }
