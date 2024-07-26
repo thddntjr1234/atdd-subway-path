@@ -6,10 +6,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -148,17 +146,21 @@ public class Sections {
 
     private void middleCaseUpStationProcess(Section newSection) {
         // 상단 기준인 섹션의 index를 얻는다
-        Section rightSection = sections.stream()
+        Section leftSection = sections.stream()
                 .filter(section -> section.getUpwardStation().equals(newSection.getUpwardStation()))
                 .findFirst().get();
-        int replacementTargetSectionIndex = sections.indexOf(rightSection);
+        int replacementTargetSectionIndex = sections.indexOf(leftSection);
+
+        Station upStation = newSection.getUpwardStation();
+        Station middleStation = newSection.getDownwardStation();
+        Station downStation = leftSection.getDownwardStation();
 
         // 해당 index의 섹션의 상행역을 newSection.downStation으로 업데이트하고 newSection의 distance만큼 감소시킨다.
-        rightSection.updateSection(newSection.getDownwardStation(), rightSection.getDownwardStation(), rightSection.getDistance() - newSection.getDistance());
-
+        leftSection.updateSection(upStation, middleStation, newSection.getDistance());
+        newSection.updateSection(middleStation, downStation, leftSection.getDistance() - newSection.getDistance());
         // 기존 구간을 수정한 구간으로 교체하고 새로 추가되는 구간을 기존 구간의 앞에 추가한다.
-        sections.set(replacementTargetSectionIndex, rightSection);
-        sections.add(replacementTargetSectionIndex, newSection);
+        sections.set(replacementTargetSectionIndex, leftSection);
+        sections.add(replacementTargetSectionIndex + 1, newSection);
     }
 
     private void middleCaseDownStationProcess(Section newSection) {
@@ -247,6 +249,13 @@ public class Sections {
         return sections.stream()
                 .flatMap(section -> Stream.of(section.getUpwardStation(), section.getDownwardStation()))
                 .distinct()
+                .collect(Collectors.toMap(
+                        Station::getName,
+                        Function.identity(),
+                        (existing, replacement) -> existing,
+                        LinkedHashMap::new))
+                .values()
+                .stream()
                 .collect(Collectors.toList());
     }
 }

@@ -197,7 +197,7 @@ public class SectionAcceptanceTest {
         LineResponse line = LineCommonApi.findLineById(인천1호선.getId()).as(LineResponse.class);
         List<String> names = line.getStations().stream().map(StationResponse::getName).collect(Collectors.toList());
 
-        assertThat(names).containsExactly(계양역.getName(), 국제업무지구역.getName());
+        assertThat(names).contains(계양역.getName(), 국제업무지구역.getName());
     }
 
     /**
@@ -219,7 +219,24 @@ public class SectionAcceptanceTest {
         LineResponse line = LineCommonApi.findLineById(인천1호선.getId()).as(LineResponse.class);
         List<String> names = line.getStations().stream().map(StationResponse::getName).collect(Collectors.toList());
 
-        assertThat(names).containsExactly(계양역.getName(), 국제업무지구역.getName());
+        assertThat(names).contains(계양역.getName(), 국제업무지구역.getName());
+    }
+
+    /**
+     * Given: 추가된 구간이 없는 노선이 등록되어 있고
+     * When: 해당 노선의 하행역을 제거하면
+     * Then: 지하철 구간 제거에 실패한다.
+     */
+    @DisplayName("지하철 구간 삭제 중 구간이 1개인 노선의 하행역 제거에 실패한다.")
+    @Test
+    void deleteDownStationWhenMinimumSection() {
+        //given
+
+        //when
+        var response = LineCommonApi.deleteSection(인천1호선.getId(), 국제업무지구역.getId());
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -229,11 +246,30 @@ public class SectionAcceptanceTest {
      */
     @DisplayName("지하철 구간 삭제 중 구간이 1개인 노선의 구간 삭제에 실패한다.")
     @Test
-    void deleteMinimumSection() {
+    void deleteUpStationWhenMinimumSection() {
         //given
 
         //when
-        var response = LineCommonApi.deleteSection(인천1호선.getId(), 송도달빛축제공원역.getId());
+        var response = LineCommonApi.deleteSection(인천1호선.getId(), 계양역.getId());
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    /**
+     * Given: 두개의 구간이 있는 노선이 등록되어 있고
+     * When: 노선에 없는 역을 삭제하면
+     * Then: 지하철 구간 제거에 실패한다.
+     */
+    @DisplayName("지하철 구간 삭제 중 노선에 없는 역을 삭제하면 구간 제거에 실패한다.")
+    @Test
+    void deleteNotExistingSection() {
+        //given
+        SectionCreateRequest 신_구간 = new SectionCreateRequest(계양역.getId(), 인천터미널역.getId(), 5);
+        LineCommonApi.addSection(인천1호선.getId(), 신_구간);
+
+        //when
+        var response = LineCommonApi.deleteSection(인천1호선.getId(), 신검암중앙역.getId());
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());

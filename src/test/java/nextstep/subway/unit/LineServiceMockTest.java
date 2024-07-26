@@ -190,7 +190,6 @@ public class LineServiceMockTest {
             when(lineRepository.findById(인천1호선.getId())).thenReturn(Optional.ofNullable(인천1호선));
             when(stationService.findByStationId(인천터미널역.getId())).thenReturn(인천터미널역);
             when(stationService.findByStationId(계양역.getId())).thenReturn(계양역);
-            when(stationService.findByStationId(국제업무지구역.getId())).thenReturn(국제업무지구역);
 
             var 인천1호선_신구간 = new Section(계양역, 인천터미널역, 4);
             var 인천1호선_신구간_생성_요청 = SectionCreateRequest.of(인천1호선_신구간);
