@@ -4,29 +4,18 @@ import nextstep.subway.domain.line.dto.LineCreateRequest;
 import nextstep.subway.domain.line.dto.LineResponse;
 import nextstep.subway.domain.line.dto.LineUpdateRequest;
 import nextstep.subway.domain.station.dto.StationResponse;
-import nextstep.subway.utils.DatabaseCleanup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
 @DisplayName("지하철 노선 관련 기능")
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
-public class LineAcceptanceTest {
-
-    @Autowired
-    private DatabaseCleanup databaseCleanup;
+public class LineAcceptanceTest extends BasicAcceptanceTest{
 
     private StationResponse 장암역;
     private StationResponse 석남역;
@@ -38,9 +27,6 @@ public class LineAcceptanceTest {
      */
     @BeforeEach
     void initStations() {
-        databaseCleanup.afterPropertiesSet();
-        databaseCleanup.execute();
-
         장암역 = StationCommonApi.createStation("장암역").as(StationResponse.class);
         석남역 = StationCommonApi.createStation("석남역").as(StationResponse.class);
         계양역 = StationCommonApi.createStation("계양역").as(StationResponse.class);
