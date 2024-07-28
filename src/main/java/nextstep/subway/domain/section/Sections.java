@@ -181,25 +181,51 @@ public class Sections {
     public void deleteSection(Station station) {
         validateStationDeletable(station);
 
-        SectionStrategy strategy = null;
         if (isFirstDeletionCase(station)) {
-            strategy = new FirstCaseSectionStrategy();
+            deleteFirstSection(station);
+            return;
         }
 
         if (isLastDeletionCase(station)) {
-            strategy = new LastCaseSectionStrategy();
+            deleteLastSection(station);
+            return;
         }
 
         if (isMiddleDeletionCase(station)) {
-            strategy = new MiddleCaseSectionStrategy();
+            deleteMiddleSection(station);
+            return;
         }
 
-        // validateStationDeletable에서 놓친 케이스에 대한 방어코드
-        if (strategy == null) {
-            throw new IllegalArgumentException("구간 제거에 실패했습니다.");
-        }
+        throw new IllegalArgumentException("구간 제거에 실패했습니다.");
+    }
 
-        strategy.deleteSection(sections, station);
+    public void deleteFirstSection(Station station) {
+        Section section = sections.stream()
+                .filter(element -> element.getUpwardStation().equals(station))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("삭제할 역을 찾을 수 없습니다."));
+        sections.remove(section);
+    }
+
+    public void deleteLastSection(Station station) {
+        Section section = sections.stream()
+                .filter(element -> element.getDownwardStation().equals(station))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("삭제할 역을 찾을 수 없습니다."));
+        sections.remove(section);
+    }
+
+    public void deleteMiddleSection(Station station) {
+        Section leftSection = sections.stream()
+                .filter(section -> section.getDownwardStation().equals(station))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("삭제할 역을 찾을 수 없습니다."));
+
+        Section rightSection = sections.stream()
+                .filter(section -> section.getUpwardStation().equals(station))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("삭제할 역을 찾을 수 없습니다."));
+
+        leftSection.updateSection(leftSection.getUpwardStation(), rightSection.getDownwardStation(), leftSection.getDistance() + rightSection.getDistance());
+        sections.remove(rightSection);
     }
 
     private void validateStationDeletable(Station station) {

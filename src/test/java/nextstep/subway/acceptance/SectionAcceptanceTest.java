@@ -241,10 +241,10 @@ public class SectionAcceptanceTest {
 
     /**
      * Given: 추가된 구간이 없는 노선이 등록되어 있고
-     * When: 해당 노선의 하행역을 제거하면
+     * When: 해당 노선의 상행역을 제거하면
      * Then: 지하철 구간 제거에 실패한다.
      */
-    @DisplayName("지하철 구간 삭제 중 구간이 1개인 노선의 구간 삭제에 실패한다.")
+    @DisplayName("지하철 구간 삭제 중 구간이 1개인 노선의 상행역 삭제에 실패한다.")
     @Test
     void deleteUpStationWhenMinimumSection() {
         //given

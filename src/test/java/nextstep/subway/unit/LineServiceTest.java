@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static nextstep.subway.utils.LineUtil.getStationNames;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -74,10 +75,7 @@ public class LineServiceTest {
         // line.getSections 메서드를 통해 검증
         Line line = lineRepository.findById(인천1호선.getId()).get();
         assertThat(line.getSections().size()).isEqualTo(2);
-        assertThat(line.getSections().stream()
-                .flatMap(section -> Stream.of(section.getUpwardStation().getName(), section.getDownwardStation().getName()))
-                .distinct()
-                .collect(Collectors.toList()))
+        assertThat(getStationNames(line.getSections()))
                 .containsExactly("계양역", "국제업무지구역", "송도달빛축제공원역");
 
     }
@@ -98,10 +96,7 @@ public class LineServiceTest {
         // line.getSections 메서드를 통해 검증
         Line line = lineRepository.findById(인천1호선.getId()).get();
         assertThat(line.getSections().size()).isEqualTo(2);
-        assertThat(line.getSections().stream()
-                .flatMap(section -> Stream.of(section.getUpwardStation().getName(), section.getDownwardStation().getName()))
-                .distinct()
-                .collect(Collectors.toList()))
+        assertThat(getStationNames(line.getSections()))
                 .containsExactly("신검암중앙역", "계양역", "국제업무지구역");
     }
 
@@ -121,10 +116,7 @@ public class LineServiceTest {
         // line.getSections 메서드를 통해 검증
         Line line = lineRepository.findById(인천1호선.getId()).get();
         assertThat(line.getSections().size()).isEqualTo(2);
-        assertThat(line.getSections().stream()
-                .flatMap(section -> Stream.of(section.getUpwardStation().getName(), section.getDownwardStation().getName()))
-                .distinct()
-                .collect(Collectors.toList()))
+        assertThat(getStationNames(line.getSections()))
                 .containsExactly("계양역", "인천터미널역", "국제업무지구역");
     }
 
@@ -144,10 +136,7 @@ public class LineServiceTest {
         // line.getSections 메서드를 통해 검증
         Line line = lineRepository.findById(인천1호선.getId()).get();
         assertThat(line.getSections().size()).isEqualTo(2);
-        assertThat(line.getSections().stream()
-                .flatMap(section -> Stream.of(section.getUpwardStation().getName(), section.getDownwardStation().getName()))
-                .distinct()
-                .collect(Collectors.toList()))
+        assertThat(getStationNames(line.getSections()))
                 .containsExactly("계양역", "인천터미널역", "국제업무지구역");
     }
 
@@ -168,10 +157,7 @@ public class LineServiceTest {
             //then
             var stations = lineService.findLineById(인천1호선.getId()).getStations();
             assertThat(stations.size()).isEqualTo(2);
-            assertThat(stations.stream()
-                    .map(StationResponse::getName)
-                    .distinct()
-                    .collect(Collectors.toList())).containsExactly(계양역.getName(), 국제업무지구역.getName());
+            assertThat(getStationNames(stations)).containsExactly(계양역.getName(), 국제업무지구역.getName());
         }
 
         @Test
@@ -189,10 +175,7 @@ public class LineServiceTest {
             var line = lineService.findLineById(인천1호선.getId());
             var stations = line.getStations();
             assertThat(stations.size()).isEqualTo(2);
-            assertThat(stations.stream()
-                    .map(StationResponse::getName)
-                    .distinct()
-                    .collect(Collectors.toList())).containsExactly(계양역.getName(), 국제업무지구역.getName());
+            assertThat(getStationNames(stations)).containsExactly(계양역.getName(), 국제업무지구역.getName());
         }
 
         @Test
@@ -210,10 +193,7 @@ public class LineServiceTest {
             var line = lineService.findLineById(인천1호선.getId());
             var stations = line.getStations();
             assertThat(stations.size()).isEqualTo(2);
-            assertThat(stations.stream()
-                    .map(StationResponse::getName)
-                    .distinct()
-                    .collect(Collectors.toList())).containsExactly(계양역.getName(), 국제업무지구역.getName());
+            assertThat(getStationNames(stations)).containsExactly(계양역.getName(), 국제업무지구역.getName());
         }
     }
 }
