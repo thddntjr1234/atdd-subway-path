@@ -6,10 +6,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -148,17 +146,21 @@ public class Sections {
 
     private void middleCaseUpStationProcess(Section newSection) {
         // 상단 기준인 섹션의 index를 얻는다
-        Section rightSection = sections.stream()
+        Section leftSection = sections.stream()
                 .filter(section -> section.getUpwardStation().equals(newSection.getUpwardStation()))
                 .findFirst().get();
-        int replacementTargetSectionIndex = sections.indexOf(rightSection);
+        int replacementTargetSectionIndex = sections.indexOf(leftSection);
+
+        Station upStation = newSection.getUpwardStation();
+        Station middleStation = newSection.getDownwardStation();
+        Station downStation = leftSection.getDownwardStation();
 
         // 해당 index의 섹션의 상행역을 newSection.downStation으로 업데이트하고 newSection의 distance만큼 감소시킨다.
-        rightSection.updateSection(newSection.getDownwardStation(), rightSection.getDownwardStation(), rightSection.getDistance() - newSection.getDistance());
-
+        leftSection.updateSection(upStation, middleStation, newSection.getDistance());
+        newSection.updateSection(middleStation, downStation, leftSection.getDistance() - newSection.getDistance());
         // 기존 구간을 수정한 구간으로 교체하고 새로 추가되는 구간을 기존 구간의 앞에 추가한다.
-        sections.set(replacementTargetSectionIndex, rightSection);
-        sections.add(replacementTargetSectionIndex, newSection);
+        sections.set(replacementTargetSectionIndex, leftSection);
+        sections.add(replacementTargetSectionIndex + 1, newSection);
     }
 
     private void middleCaseDownStationProcess(Section newSection) {
@@ -177,21 +179,79 @@ public class Sections {
     }
 
     public void deleteSection(Station station) {
+        validateStationDeletable(station);
+
+        if (isFirstDeletionCase(station)) {
+            deleteFirstSection(station);
+            return;
+        }
+
+        if (isLastDeletionCase(station)) {
+            deleteLastSection(station);
+            return;
+        }
+
+        if (isMiddleDeletionCase(station)) {
+            deleteMiddleSection(station);
+            return;
+        }
+
+        throw new IllegalArgumentException("구간 제거에 실패했습니다.");
+    }
+
+    public void deleteFirstSection(Station station) {
+        Section section = sections.stream()
+                .filter(element -> element.getUpwardStation().equals(station))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("삭제할 역을 찾을 수 없습니다."));
+        sections.remove(section);
+    }
+
+    public void deleteLastSection(Station station) {
+        Section section = sections.stream()
+                .filter(element -> element.getDownwardStation().equals(station))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("삭제할 역을 찾을 수 없습니다."));
+        sections.remove(section);
+    }
+
+    public void deleteMiddleSection(Station station) {
+        Section leftSection = sections.stream()
+                .filter(section -> section.getDownwardStation().equals(station))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("삭제할 역을 찾을 수 없습니다."));
+
+        Section rightSection = sections.stream()
+                .filter(section -> section.getUpwardStation().equals(station))
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("삭제할 역을 찾을 수 없습니다."));
+
+        leftSection.updateSection(leftSection.getUpwardStation(), rightSection.getDownwardStation(), leftSection.getDistance() + rightSection.getDistance());
+        sections.remove(rightSection);
+    }
+
+    private void validateStationDeletable(Station station) {
         if (sections.size() == 1) {
             throw new NoSuchElementException("구간이 1개인 경우 구간을 삭제할 수 없습니다.");
         }
 
-        Section section = sections.stream()
-                .filter(element -> element.getDownwardStation().equals(station))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 구간입니다."));
-
-
-        if (!isSectionLastElement(section)) {
-            throw new IllegalArgumentException("마지막 구간에 해당하는 역만 삭제할 수 있습니다.");
+        List<Station> stations = getStations();
+        if (!stations.contains(station)) {
+            throw new IllegalArgumentException("존재하지 않는 역입니다.");
         }
+    }
 
-        sections.remove(section);
+    private boolean isFirstDeletionCase(Station station) {
+        List<Station> stations = getStations();
+        return stations.contains(station) && stations.indexOf(station) == 0;
+    }
+
+    private boolean isMiddleDeletionCase(Station station) {
+        List<Station> stations = getStations();
+        return stations.contains(station) && (stations.indexOf(station) > 0 && stations.indexOf(station) < stations.size() - 1);
+    }
+
+    private boolean isLastDeletionCase(Station station) {
+        List<Station> stations = getStations();
+        return stations.contains(station) && stations.indexOf(station) == stations.size() - 1;
     }
 
     private boolean isSectionLastElement(Section section) {
@@ -215,6 +275,13 @@ public class Sections {
         return sections.stream()
                 .flatMap(section -> Stream.of(section.getUpwardStation(), section.getDownwardStation()))
                 .distinct()
+                .collect(Collectors.toMap(
+                        Station::getName,
+                        Function.identity(),
+                        (existing, replacement) -> existing,
+                        LinkedHashMap::new))
+                .values()
+                .stream()
                 .collect(Collectors.toList());
     }
 }
