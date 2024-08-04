@@ -21,6 +21,10 @@ public class StationResponse {
         this.name = station.getName();
     }
 
+    public static StationResponse of(Station station) {
+        return new StationResponse(station);
+    }
+
     public Long getId() {
         return id;
     }
