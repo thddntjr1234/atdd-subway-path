@@ -41,14 +41,14 @@ public class PathService {
 
         PathFinder pathFinder = new PathFinder();
         var findResult = pathFinder.findPath(sourceStation, targetStation, sections).orElseThrow(() -> new IllegalArgumentException("요청한 경로를 찾을 수 없습니다."));
-        List<Long> stationIds = findResult.getVertexList();
-
-        List<StationResponse> stations = stationIds.stream()
-                .map(id -> StationResponse.of(findByStationId(id)))
+        List<Station> stations = findResult.getVertexList();
+        List<StationResponse> stationResponses = stations.stream()
+                .map(StationResponse::of)
                 .collect(Collectors.toList());
+
         double weight = findResult.getWeight();
 
-        return new PathResponse(stations, (long) weight);
+        return new PathResponse(stationResponses, (long) weight);
     }
 
     public Station findByStationId(Long stationId) {

@@ -12,12 +12,4 @@ public class SectionEdge extends DefaultWeightedEdge {
     public SectionEdge(Section section) {
         this.section = section;
     }
-
-    private Long getUpwardStationId() {
-        return section.getUpwardStation().getId();
-    }
-
-    private Long getDownwardStationId() {
-        return section.getDownwardStation().getId();
-    }
 }

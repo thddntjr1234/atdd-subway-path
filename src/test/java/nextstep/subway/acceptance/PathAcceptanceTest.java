@@ -66,7 +66,7 @@ public class PathAcceptanceTest extends BasicAcceptanceTest{
             //given
 
             //when
-            var response = PathCommonApi.findLinePath(이호선, 남부터미널역, 역삼역);
+            var response = PathCommonApi.findLinePath(남부터미널역, 역삼역);
 
             //then
             assertThat(response.jsonPath().getList("stations.name", String.class)).containsExactly("남부터미널역", "양재역", "강남역", "역삼역");
@@ -83,7 +83,7 @@ public class PathAcceptanceTest extends BasicAcceptanceTest{
             //given
 
             //when
-            var response = PathCommonApi.findLinePath(이호선, 남부터미널역, 남부터미널역);
+            var response = PathCommonApi.findLinePath(남부터미널역, 남부터미널역);
 
             //then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -95,7 +95,7 @@ public class PathAcceptanceTest extends BasicAcceptanceTest{
             //given
 
             //when
-            var response = PathCommonApi.findLinePath(이호선, 석남역, 남부터미널역);
+            var response = PathCommonApi.findLinePath(석남역, 남부터미널역);
 
             //then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -107,7 +107,7 @@ public class PathAcceptanceTest extends BasicAcceptanceTest{
             //given
 
             //when
-            var response = PathCommonApi.findLinePath(이호선, 12312L, 79L);
+            var response = PathCommonApi.findLinePath(12312L, 79L);
 
             //then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());

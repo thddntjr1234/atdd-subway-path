@@ -12,27 +12,23 @@ import java.util.stream.Stream;
 
 public class PathFinder {
 
-    private WeightedMultigraph<Long, SectionEdge> graph;
+    private WeightedMultigraph<Station, SectionEdge> graph;
 
     public PathFinder() {
         graph = new WeightedMultigraph<>(SectionEdge.class);
     }
 
-    public PathFinder(WeightedMultigraph<Long, SectionEdge> graph) {
-        this.graph = graph;
-    }
-
     public Optional<GraphPath> findPath(Station source, Station target, List<Section> edges) {
-        validateStaions(source, target);
+        validateStations(source, target);
 
         setUpWeightedEdges(edges);
         DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);
-        return Optional.ofNullable(dijkstraShortestPath.getPath(source.getId(), target.getId()));
+        return Optional.ofNullable(dijkstraShortestPath.getPath(source, target));
     }
 
-    private void validateStaions(Station source, Station target) {
+    private void validateStations(Station source, Station target) {
         if (source == null || target == null) {
-            throw new IllegalArgumentException("출발역과 도착역이 유효한 역이 아닙니다.");
+            throw new IllegalArgumentException("출발역: " + source.getName() + ", 도착역: " + target.getName() + "이 유효한 역이 아닙니다.");
         }
 
         if (source.equals(target)) {
@@ -42,12 +38,12 @@ public class PathFinder {
 
     private void setUpWeightedEdges(List<Section> edges) {
         edges.stream()
-                .flatMap(edge -> Stream.of(edge.getUpwardStation().getId(), edge.getDownwardStation().getId()))
+                .flatMap(edge -> Stream.of(edge.getUpwardStation(), edge.getDownwardStation()))
                 .distinct()
                 .forEach(graph::addVertex);
 
         edges.forEach(edge -> {
-            SectionEdge sectionEdge = graph.addEdge(edge.getUpwardStation().getId(), edge.getDownwardStation().getId());
+            SectionEdge sectionEdge = graph.addEdge(edge.getUpwardStation(), edge.getDownwardStation());
             graph.setEdgeWeight(sectionEdge, edge.getDistance());
         });
     }
