@@ -5,27 +5,18 @@ import nextstep.subway.domain.line.dto.LineResponse;
 import nextstep.subway.domain.section.dto.SectionCreateRequest;
 import nextstep.subway.domain.section.dto.SectionResponse;
 import nextstep.subway.domain.station.dto.StationResponse;
-import nextstep.subway.utils.DatabaseCleanup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
 @DisplayName("지하철 구간 관련 기능")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class SectionAcceptanceTest {
-
-    @Autowired
-    private DatabaseCleanup databaseCleanup;
+public class SectionAcceptanceTest extends BasicAcceptanceTest {
 
     private StationResponse 신검암중앙역;
     private StationResponse 계양역;
@@ -37,9 +28,6 @@ public class SectionAcceptanceTest {
 
     @BeforeEach
     void setup() {
-        databaseCleanup.afterPropertiesSet();
-        databaseCleanup.execute();
-
         신검암중앙역 = StationCommonApi.createStation("신검암중앙역").as(StationResponse.class);
         계양역 = StationCommonApi.createStation("계양역").as(StationResponse.class);
         국제업무지구역 = StationCommonApi.createStation("국제업무지구역").as(StationResponse.class);
